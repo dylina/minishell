@@ -1,37 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgorceac <dgorceac@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/29 14:16:50 by dgorceac          #+#    #+#             */
-/*   Updated: 2025/10/31 19:04:11 by dgorceac         ###   ########.fr       */
+/*   Created: 2025/10/31 17:17:36 by dgorceac          #+#    #+#             */
+/*   Updated: 2025/10/31 19:08:50 by dgorceac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int main(int argc, char **argv)
+void	signal_handler(int signal)
 {
-    char    *input;
+    (void)signal;
+    write(1, "\n", 1);
+    rl_replace_line("", 0);
+    rl_on_new_line();
+    rl_redisplay();
+}
 
-    if (argc < 2)
-    {
-        ft_printf("\n");
-        exit (0);
-    }
-    while (1)
-    {
-        input = readline("minishell> ");
-        if (!input)
-        {
-            ft_printf("EOF?\n");
-            break ;
-        }
-        if (input)
-            add_history(input);
-        free (input);
-    }
-    return (0);
+void    setup_signals(void)
+{
+    signal(SIGINT, signal_handler);
+    signal(SIGQUIT, SIG_IGN);
+    //sigquit	Interruption forte (ctrl-\)	ignore
+    //sigint	Interruption (ctrl-C)	Terminaison
+    //Ctrl+D close the shell (EOF)
 }
